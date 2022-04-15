@@ -5,7 +5,7 @@ import {
   getDayNumber,
   getNotPermitPlatesNumbers,
 } from "../utils/pico-placa-checker";
-
+import "./App.css";
 interface IForm {
   [key: string]: any;
   plate: string;
@@ -61,12 +61,11 @@ function App(): JSX.Element {
   };
   return (
     <>
-      <h1>Pico and placa predictor</h1>
-      <form onSubmit={predictHandler}>
+      <h1 className="title">Pico & Placa</h1>
+      <form className="form_prediction" onSubmit={predictHandler}>
         <fieldset>
-          <label htmlFor="plate">Plate Number</label>
+          <legend>Plate Number</legend>
           <input
-            id="plate"
             type="text"
             placeholder="TBD-5695 or TBD5695"
             value={formModel.plate}
@@ -78,24 +77,25 @@ function App(): JSX.Element {
               });
             }}
           />
-          {!messageError.plate && (
-            <span>Please enter a valid plate Number</span>
-          )}
         </fieldset>
+        {!messageError.plate && (
+          <span className="msg_error">Please enter a valid plate Number</span>
+        )}
         <fieldset>
-          <label htmlFor="date">Date</label>
+          <legend>Date</legend>
           <input
             type="datetime-local"
-            id="date"
             value={formModel.date}
             onChange={(e) => {
               setFormModel({ ...formModel, date: e.target.value });
               setMessageError({ ...messageError, date: e.target.value !== "" });
             }}
           />
-          {!messageError.date && <span> Please enter a date</span>}
         </fieldset>
-        <input type="submit" value="Predict" />
+        {!messageError.date && (
+          <span className="msg_error"> Please enter a date</span>
+        )}
+        <input className="button" type="submit" value="Predict" />
       </form>
       {openPrediction && (
         <div className="card">
@@ -111,7 +111,13 @@ function App(): JSX.Element {
               {config.dayList[prediction.dayNumber - 1]}
             </p>
           )}
+
           <p>
+            Remember the horary for Pico and Placa was{" "}
+            {`${config.startMorning} to ${config.endMorning} and ${config.startAfternoon} to ${config.endAfternoon}`}
+          </p>
+
+          <p className={`prediction ${prediction.std?"reject":""}`}>
             Your car {prediction.std ? "have" : "don't have"} pico y placa on
             {config.dayList[prediction.dayNumber - 1]} at {prediction.time}
           </p>
