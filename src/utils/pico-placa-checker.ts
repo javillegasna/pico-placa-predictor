@@ -37,24 +37,26 @@ export const getNotPermitPlatesNumbers = (dayNumber: number): number[] => {
 };
 
 // main function
-export const picoPlacaChecker = (
+export const picoPlacaChecker = ( 
   plateNumber: string,
   date: string,
   time: string
 ): boolean => {
+  //First obtain the day number of the date provided
   const dayNumber = getDayNumber(date);
-  //on saturday or sunday all plates are permit
+  //Second on saturday or sunday all plates numbers are permitted
   if (dayNumber === 6 || dayNumber === 7) return false;
-  //if the time is't on range  (Hours: 7:00am - 9:30am / 16:00pm - 19:30) all plates are permit.
+  // Third if the time is't on range  (Hours: 7:00am - 9:30am / 16:00pm - 19:30) all plates are permit.
   if (
     !IsTimeInRange(config.startMorning, config.endMorning, time) &&
     !IsTimeInRange(config.startAfternoon, config.endAfternoon, time)
   )
     return false;
-  //if aren't a weekend or day  we need to check
-  const LastPlateNumber = getLastPlateNumber(plateNumber);
+  //Fourth if aren't a weekend we need to check what platte Numbers isn't permitted.
   const arrayOfPlates = getNotPermitPlatesNumbers(dayNumber);
+  //Fifth its necessary to obtain the last number of the plate
+  const LastPlateNumber = getLastPlateNumber(plateNumber);
+  //Sixth finally compare if the plate number was on restricted numbers.
   return arrayOfPlates.includes(LastPlateNumber);
 };
-
 export default picoPlacaChecker;
