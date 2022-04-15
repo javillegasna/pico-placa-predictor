@@ -34,30 +34,30 @@ test("if de day is monday(1) the not permitted plates to be [1,2]",()=>{
 })
 // test main function
 
-test("if the input are TBD-5697, 2022-04-14, 6:59 to be true",()=>{
-  expect(picoPlacaChecker("TBD-5697","2022-04-14","6:59")).not.toBeFalsy()
+test("if the input are TBD-5697, 2022-04-14, 6:59 to be false",()=>{
+  expect(picoPlacaChecker("TBD-5697","2022-04-14","6:59")).toBeFalsy()
 })
 
-test("if the input are TBD-5697, 2022-04-14, 7:00 to be false",()=>{
-  expect(picoPlacaChecker("TBD-5697","2022-04-14","7:00")).toBeFalsy()
+test("if the input are TBD-5697, 2022-04-14, 7:00 to be true",()=>{
+  expect(picoPlacaChecker("TBD-5697","2022-04-14","7:00")).not.toBeFalsy()
 })
 
-test("if the input are TBD-5697, 2022-04-14, 8:00 to be false",()=>{
-  expect(picoPlacaChecker("TBD-5697","2022-04-14","8:00")).toBeFalsy()
+test("if the input are TBD-5697, 2022-04-14, 8:00 to be true",()=>{
+  expect(picoPlacaChecker("TBD-5697","2022-04-14","8:00")).not.toBeFalsy()
 })
 
-test("if the input are TBD-5697, 2022-04-14, 9:30 to be false",()=>{
-  expect(picoPlacaChecker("TBD-5697","2022-04-14","9:30")).toBeFalsy()
+test("if the input are TBD-5697, 2022-04-14, 9:30 to be true",()=>{
+  expect(picoPlacaChecker("TBD-5697","2022-04-14","9:30")).not.toBeFalsy()
 })
 
-test("if the input are TBD-5697, 2022-04-14, 15:00 to be true",()=>{
-  expect(picoPlacaChecker("TBD-5697","2022-04-14","15:00")).not.toBeFalsy()
+test("if the input are TBD-5697, 2022-04-14, 15:00 to be false",()=>{
+  expect(picoPlacaChecker("TBD-5697","2022-04-14","15:00")).toBeFalsy()
 })
 
 test("if the input are TBD-5698, 2022-04-14, 9:30 to be false",()=>{
-  expect(picoPlacaChecker("TBD-5698","2022-04-14","9:30")).toBeFalsy()
+  expect(picoPlacaChecker("TBD-5698","2022-04-14","9:30")).not.toBeFalsy()
 })
 
 test("if the input are TBD-5691, 2022-04-14, 9:30 to be true",()=>{
-  expect(picoPlacaChecker("TBD-5691","2022-04-14","9:30")).not.toBeFalsy()
+  expect(picoPlacaChecker("TBD-5691","2022-04-14","9:30")).toBeFalsy()
 })
