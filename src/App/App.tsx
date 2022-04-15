@@ -1,46 +1,62 @@
 import React, { useState } from "react";
-import {picoPlacaChecker,getDayNumber,getNotPermitPlatesNumbers} from "../utils/pico-placa-checker";
+import config from "../config/config";
+import {
+  picoPlacaChecker,
+  getDayNumber,
+  getNotPermitPlatesNumbers,
+} from "../utils/pico-placa-checker";
+
+interface IForm {
+  [key: string]: any;
+  plate: string;
+  date: string;
+}
+interface IMessage {
+  [key: string]: any;
+  plate: boolean;
+  date: boolean;
+}
+
 function App(): JSX.Element {
-  //constants
-  const regexPlateNumber = /(^[A-Z]{3}-?[0-9]{4}|^[0-9]{4})$/;
-  interface IForm {
-    [key: string]: any;
-    plateNumber: string;
-    date: string;
-  }
-  interface IMessage {
-    [key: string]: any;
-    plateNumber: boolean;
-    date: boolean;
-  }
   //states
   const [messageError, setMessageError] = useState<IMessage>({
-    plateNumber: true,
+    plate: true,
     date: true,
   });
 
   const [formModel, setFormModel] = useState<IForm>({
     date: new Date(Date.now() - 60 * 60000 * 5).toISOString().slice(0, -8),
-    plateNumber: "",
+    plate: "",
   });
+  const [prediction, setPrediction] = useState({
+    std: false,
+    dayNumber: 1,
+    time: "",
+    platesList: [1, 2],
+  });
+
   const [openPrediction, setOpenPrediction] = useState(false);
-  const [prediction, setPrediction] = useState(false)
+
   //handlers
   const predictHandler = (e: React.FormEvent) => {
     e.preventDefault();
-    const { plateNumber, date } = formModel;
+    //validations
     const fields = Object.keys(formModel);
     const validate = fields.reduce(
-      (acc, field) => acc && messageError[field],
+      (acc, field) => acc && messageError[field] && formModel[field] !== "",
       true
     );
+    //if validations are true then open card and make a prediction
     setOpenPrediction(validate);
     if (validate) {
+      const { plate, date } = formModel;
+      //obtain time and date to the input
       const [newDate, time] = date.split("T");
-      console.log(newDate,time,plateNumber)
-      const newPrediction = picoPlacaChecker(plateNumber, newDate, time);
-      console.log(newPrediction)
-      setPrediction(newPrediction);
+      //setting Prediction
+      const dayNumber = getDayNumber(newDate);
+      const platesList = getNotPermitPlatesNumbers(dayNumber);
+      const newPrediction = picoPlacaChecker(plate, newDate, time);
+      setPrediction({ std: newPrediction, dayNumber, platesList, time });
     }
   };
   return (
@@ -48,21 +64,21 @@ function App(): JSX.Element {
       <h1>Pico and placa predictor</h1>
       <form onSubmit={predictHandler}>
         <fieldset>
-          <label htmlFor="plateNumber">Plate Number</label>
+          <label htmlFor="plate">Plate Number</label>
           <input
-            id="plateNumber"
+            id="plate"
             type="text"
             placeholder="TBD-5695 or TBD5695"
-            value={formModel.plateNumber}
+            value={formModel.plate}
             onChange={(e) => {
-              setFormModel({ ...formModel, plateNumber: e.target.value });
+              setFormModel({ ...formModel, plate: e.target.value });
               setMessageError({
                 ...messageError,
-                plateNumber: regexPlateNumber.test(e.target.value),
+                plate: /(^[A-Z]{3}-?[0-9]{4}|^[0-9]{4})$/.test(e.target.value),
               });
             }}
           />
-          {!messageError.plateNumber && (
+          {!messageError.plate && (
             <span>Please enter a valid plate Number</span>
           )}
         </fieldset>
@@ -81,11 +97,26 @@ function App(): JSX.Element {
         </fieldset>
         <input type="submit" value="Predict" />
       </form>
-      {openPrediction && <div className="card">
-            your car {prediction?"have":"dont have"} pico y placa at dist moment
-            <span>{getDayNumber(formModel.date.split("T")[0])}</span>
-            <span>{getNotPermitPlatesNumbers(getDayNumber(formModel.date.split("T")[0]))}</span>
-        </div>}
+      {openPrediction && (
+        <div className="card">
+          {prediction.platesList.length > 0 ? (
+            <p>
+              The plates numbers that can't circulate on{" "}
+              {config.dayList[prediction.dayNumber - 1]} are{" "}
+              {prediction.platesList.join(",")}
+            </p>
+          ) : (
+            <p>
+              All plates numbers can circulate on{" "}
+              {config.dayList[prediction.dayNumber - 1]}
+            </p>
+          )}
+          <p>
+            Your car {prediction.std ? "have" : "don't have"} pico y placa on
+            {config.dayList[prediction.dayNumber - 1]} at {prediction.time}
+          </p>
+        </div>
+      )}
     </>
   );
 }

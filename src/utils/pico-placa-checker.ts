@@ -1,3 +1,4 @@
+import config from "../config/config";
 //obtain day number of IsoDate
 export const getDayNumber = (date: string): number =>
   new Date(date).getDay() + 1;
@@ -46,8 +47,8 @@ export const picoPlacaChecker = (
   if (dayNumber === 6 || dayNumber === 7) return false;
   //if the time is't on range  (Hours: 7:00am - 9:30am / 16:00pm - 19:30) all plates are permit.
   if (
-    !IsTimeInRange("7:00", "9:30", time) &&
-    !IsTimeInRange("16:00", "19:30", time)
+    !IsTimeInRange(config.startMorning, config.endMorning, time) &&
+    !IsTimeInRange(config.startAfternoon, config.endAfternoon, time)
   )
     return false;
   //if aren't a weekend or day  we need to check
