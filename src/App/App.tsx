@@ -6,6 +6,8 @@ import {
   getNotPermitPlatesNumbers,
 } from "../utils/pico-placa-checker";
 import "./App.css";
+
+//interfaces
 interface IForm {
   [key: string]: any;
   plate: string;
@@ -18,8 +20,9 @@ interface IMessage {
 }
 
 function App(): JSX.Element {
+
   //states
-  const [messageError, setMessageError] = useState<IMessage>({
+  const [Errors, setErrors] = useState<IMessage>({
     plate: true,
     date: true,
   });
@@ -38,12 +41,23 @@ function App(): JSX.Element {
   const [openPrediction, setOpenPrediction] = useState(false);
 
   //handlers
+  const plateInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const plateRegex = /(^[A-Z]{3}-?[0-9]{4}|^[0-9]{4})$/;
+    setFormModel({ ...formModel, plate: e.target.value });
+    setErrors({ ...Errors, plate: plateRegex.test(e.target.value) });
+  };
+
+  const dateInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormModel({ ...formModel, date: e.target.value });
+    setErrors({ ...Errors, date: e.target.value !== "" });
+  }
+
   const predictHandler = (e: React.FormEvent) => {
     e.preventDefault();
     //validations
     const fields = Object.keys(formModel);
     const validate = fields.reduce(
-      (acc, field) => acc && messageError[field] && formModel[field] !== "",
+      (acc, field) => acc && Errors[field] && formModel[field] !== "",
       true
     );
     //if validations are true then open card and make a prediction
@@ -62,6 +76,7 @@ function App(): JSX.Element {
   return (
     <>
       <h1 className="title">Pico & Placa</h1>
+
       <form className="form_prediction" onSubmit={predictHandler}>
         <fieldset>
           <legend>Plate Number</legend>
@@ -69,16 +84,10 @@ function App(): JSX.Element {
             type="text"
             placeholder="TBD-5695 or TBD5695"
             value={formModel.plate}
-            onChange={(e) => {
-              setFormModel({ ...formModel, plate: e.target.value });
-              setMessageError({
-                ...messageError,
-                plate: /(^[A-Z]{3}-?[0-9]{4}|^[0-9]{4})$/.test(e.target.value),
-              });
-            }}
+            onChange={plateInputHandler}
           />
         </fieldset>
-        {!messageError.plate && (
+        {!Errors.plate && (
           <span className="msg_error">Please enter a valid plate Number</span>
         )}
         <fieldset>
@@ -86,17 +95,15 @@ function App(): JSX.Element {
           <input
             type="datetime-local"
             value={formModel.date}
-            onChange={(e) => {
-              setFormModel({ ...formModel, date: e.target.value });
-              setMessageError({ ...messageError, date: e.target.value !== "" });
-            }}
+            onChange={dateInputHandler}
           />
         </fieldset>
-        {!messageError.date && (
+        {!Errors.date && (
           <span className="msg_error"> Please enter a date</span>
         )}
         <input className="button" type="submit" value="Predict" />
       </form>
+
       {openPrediction && (
         <div className="card">
           {prediction.platesList.length > 0 ? (
@@ -117,7 +124,7 @@ function App(): JSX.Element {
             {`${config.startMorning} to ${config.endMorning} and ${config.startAfternoon} to ${config.endAfternoon}`}
           </p>
 
-          <p className={`prediction ${prediction.std?"reject":""}`}>
+          <p className={`prediction ${prediction.std ? "reject" : ""}`}>
             Your car {prediction.std ? "have" : "don't have"} pico y placa on
             {config.dayList[prediction.dayNumber - 1]} at {prediction.time}
           </p>

@@ -26,6 +26,8 @@ test("When plate input have a valid plate card will be render", () => {
   render(<App />);
   const buttonElement = screen.getByText("Predict");
   const inputPlate = screen.getByDisplayValue("");
+  const inputDate = screen.getByDisplayValue(/2022-/i);
+  fireEvent.change(inputDate,{target:{value:"2022-04-14T22:03"}})
   fireEvent.change(inputPlate, { target: { value: "TBD5695"}});
   fireEvent.click(buttonElement);
   const cardElement = screen.getByText(/The plates numbers/i)

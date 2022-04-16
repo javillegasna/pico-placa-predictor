@@ -56,6 +56,9 @@ export const picoPlacaChecker = (
 # Available Scripts
 
 In the project directory, you can run:
+### `npm install`
+
+After clone the repository, it is necessary to install the dependencies.
 
 ### `npm start`
 
