@@ -125,7 +125,7 @@ function App(): JSX.Element {
           </p>
 
           <p className={`prediction ${prediction.std ? "reject" : ""}`}>
-            Your car {prediction.std ? "have" : "don't have"} pico y placa on
+            Your car {prediction.std ? "have" : "don't have"} pico y placa on{" "}
             {config.dayList[prediction.dayNumber - 1]} at {prediction.time}
           </p>
         </div>

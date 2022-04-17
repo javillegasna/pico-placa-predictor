@@ -1,7 +1,10 @@
 import config from "../config/config";
 //obtain day number of IsoDate
-export const getDayNumber = (date: string): number =>
-  new Date(date).getUTCDay();
+export const getDayNumber = (date: string): number =>{
+  const dayNumber = new Date(date).getUTCDay();
+  if(dayNumber===0) return 7
+  return dayNumber
+}
 
 //it's necessary a time with the format "HH:mm"
 export const createDate = (time: string): Date => {

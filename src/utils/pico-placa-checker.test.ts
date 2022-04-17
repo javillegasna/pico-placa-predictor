@@ -6,6 +6,9 @@ import {
   picoPlacaChecker
 } from "./pico-placa-checker";
 //fist step obtain the day number
+test("The day number of 2022-04-17 to be 7 for Sunday", () => {
+  expect(getDayNumber("2022-04-17")).toBe(7);
+});
 test("The day number of 2022-04-14 to be 4 for Thursday", () => {
   expect(getDayNumber("2022-04-14")).toBe(4);
 });
